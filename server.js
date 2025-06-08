@@ -22,7 +22,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000', // For local development
     // 👇👇👇 REPLACE THIS WITH YOUR ACTUAL DEPLOYED FRONTEND URL 👇👇👇
-    'https://your-frontend-domain.com' // Example: 'https://my-travelo-app.netlify.app' or 'https://my-travelo-app.vercel.app'
+    'https://travelobooking.netlify.app' // Example: 'https://my-travelo-app.netlify.app' or 'https://my-travelo-app.vercel.app'
   ],
   credentials: true
 }));
