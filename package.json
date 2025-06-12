@@ -7,15 +7,13 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "engines": {
-    "node": ">=18"
-  },
   "keywords": [],
   "author": "Your Name",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -24,5 +22,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
+  },
+   "engines": {                   
+    "node": "20.x"                
   }
 }
