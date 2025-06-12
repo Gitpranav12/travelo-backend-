@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const sendEmail = require('../utils/sendEmail'); // Already present
 const crypto = require('crypto'); // Node.js ka built-in module, isko import karna hai
 
-// Custom Error Class (better error handling ke liye)
 class CustomError extends Error {
     constructor(message, statusCode) {
         super(message);
@@ -40,7 +39,6 @@ exports.register = async (req, res, next) => {
         if (user) {
             return next(new CustomError('User already exists', 400));
         }
-
         // Password hashing ab User model ke pre('save') hook mein handle ho rahi hai
         user = await User.create({ name, email, number, password });
 
@@ -74,9 +72,6 @@ exports.login = async (req, res, next) => {
     }
 };
 
-// @desc    Forgot Password functionality
-// @route   POST /api/auth/forgotpassword
-// @access  Public
 exports.forgotPassword = async (req, res, next) => {
     const { email } = req.body;
 
@@ -97,11 +92,16 @@ exports.forgotPassword = async (req, res, next) => {
         // Frontend ke liye reset URL banayein
         const resetUrl = `${process.env.CLIENT_URL}/resetpassword/${resetToken}`;
 
-        const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please click on this link to reset your password: \n\n ${resetUrl}\n\nThis link is valid for 15 minutes.`;
+        const message = `🔑🔐 You are receiving this email because you (or someone else) has requested the reset of a password. Please click on this link to reset your password: \n\n ${resetUrl}\n\nThis link is valid for 15 minutes.`;
 
         try {
-            // sendEmail function ko call karein
-            await sendEmail(user.email, 'Password Reset Request', message);
+            // ⭐ CHANGED: sendEmail function call updated to pass an options object ⭐
+            await sendEmail({
+                to: user.email,
+                subject: 'Password Reset Request',
+                html: message, // Assuming 'message' variable contains the HTML content for the email.
+            });
+            // ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
             res.status(200).json({ success: true, message: 'Password reset email sent!' });
         } catch (err) {
@@ -117,9 +117,6 @@ exports.forgotPassword = async (req, res, next) => {
     }
 };
 
-// @desc    Reset Password functionality
-// @route   PUT /api/auth/resetpassword/:resettoken
-// @access  Public
 exports.resetPassword = async (req, res, next) => {
     // URL se mile token ko hash karein
     const resetPasswordToken = crypto
