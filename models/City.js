@@ -9,4 +9,7 @@ const citySchema = new mongoose.Schema({
   }
 });
 
+// ✅ Add this line for faster search queries
+citySchema.index({ name: 1 });
+
 module.exports = mongoose.model("City", citySchema);

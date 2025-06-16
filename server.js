@@ -16,8 +16,6 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ MongoDB se connect karein
 connectDB();
-
-// ✅ CORS Middleware: Frontend URLs ko allow karein
 app.use(cors({
     origin: [
         'http://localhost:3000', // Local development ke liye
@@ -26,43 +24,28 @@ app.use(cors({
     credentials: true
 }));
 
-// ✅ JSON request bodies ko parse karein
 app.use(express.json());
-
-// ✅ Default route for health check
 app.get("/", (req, res) => {
     res.send("API is running...");
 });
-
-// ✅ API Routes setup
-// Public Authentication routes (register, login, forgot password, reset password)
-// Ab auth routes ke liye '/api/auth' prefix use karenge
 app.use('/api/auth', authRoutes); // <--- Yahan badlav kiya gaya hai
-
-// Protected User routes (middleware userRoutes.js ke andar apply kiya gaya hai)
-// User routes ab '/api/users' se access honge
 app.use('/api/users', userRoutes); // Yahan koi badlav nahi
-
 // Doosre routes
 app.use('/api/bookings', bookingRoutes);
-app.use('/api', contactRoutes); // Agar contactRoutes mein root paths ('/') hain to ye conflict kar sakta hai
+app.use('/api', contactRoutes); // 
 app.use('/api/cities', cityRoutes);
-
-// ✅ Centralized Error Handler (ADD THIS section agar pehle add nahi kiya tha)
-// Ye middleware saare routes ke baad hona chahiye
 app.use((err, req, res, next) => {
-    console.error(err.stack); // Debugging ke liye error stack ko log karein
+    console.error(err.stack); 
 
     let statusCode = err.statusCode || 500;
     let message = err.message || 'Server Error';
 
-    // Mongoose CastError (jaise galat ObjectId) ko handle karein
     if (err.name === 'CastError') {
         statusCode = 404;
         message = `Resource not found with id of ${err.value}`;
     }
 
-    // Mongoose duplicate key error (jaise duplicate email) ko handle karein
+
     if (err.code === 11000) {
         const field = Object.keys(err.keyValue)[0];
         statusCode = 400;
