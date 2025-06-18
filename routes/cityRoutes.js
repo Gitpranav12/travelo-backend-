@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
     const search = req.query.search || "";
     const cities = await City.find({
       name: { $regex: search, $options: "i" }
-    }).limit(10);
+    }).limit(5);
     res.json(cities);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
