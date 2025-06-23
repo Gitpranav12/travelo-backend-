@@ -1,17 +1,19 @@
 const Booking = require('../models/bookingModel');
 const User = require('../models/User');
-// Removed direct nodemailer import as we will use our utility
-const sendEmail = require('../utils/sendEmail'); // Import your custom sendEmail utility
+const sendEmail = require('../utils/sendEmail');
 
+// Existing bookTicket function (slightly modified to use req.user.id)
 exports.bookTicket = async (req, res) => {
   try {
-    const { from, to, guests, arrival, leaving, userId } = req.body;
+    // We expect req.user to be populated by authentication middleware
+    const userId = req.user.id; // Get userId from authenticated user
 
-    if (!from || !to || !guests || !arrival || !leaving || !userId) {
-      return res.status(400).json({ message: 'All fields including userId are required' });
+    const { from, to, guests, arrival, leaving } = req.body;
+
+    if (!from || !to || !guests || !arrival || !leaving) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-    // Optional: Validate date formats and guests count
     if (isNaN(new Date(arrival)) || isNaN(new Date(leaving))) {
       return res.status(400).json({ message: 'Invalid arrival or leaving date' });
     }
@@ -22,24 +24,21 @@ exports.bookTicket = async (req, res) => {
       return res.status(400).json({ message: 'Guests must be at least 1' });
     }
 
-    // Get user's email and name first to avoid orphan booking in case user not found
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found. Please log in again.' });
     }
 
-    // Create booking with user reference (assuming Booking schema has user field)
     const booking = new Booking({
       from,
       to,
       guests,
       arrival: new Date(arrival),
       leaving: new Date(leaving),
-      user: user._id,
+      user: user._id, // Assign the booking to the authenticated user
     });
     await booking.save();
 
-    // Send Email Notification with friendly HTML format
     const htmlMessage = `
       <h2>🎉 Congratulations, ${user.name}! Your booking is confirmed! 🎉</h2>
       <p>Thank you for booking your trip with us! We're super excited to have you onboard.</p>
@@ -56,17 +55,30 @@ exports.bookTicket = async (req, res) => {
       <p>Best wishes,<br />Your Travelo Team</p>
     `;
 
-    // ⭐ CHANGED: sendEmail utility used instead of direct nodemailer transporter ⭐
     await sendEmail({
-        to: user.email,
-        subject: '🎉 Booking Confirmed! Your trip awaits! 🎉',
-        html: htmlMessage,
+      to: user.email,
+      subject: '🎉 Booking Confirmed! Your trip awaits! 🎉',
+      html: htmlMessage,
     });
-    // ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
     res.status(201).json({ message: 'Your Tickets Successfully Booked and Confirmation Sent to Email!' });
   } catch (error) {
     console.error('Booking error:', error);
     res.status(500).json({ message: 'Server error while booking' });
+  }
+};
+
+// NEW FUNCTION: Get bookings for the authenticated user
+exports.getMyBookings = async (req, res) => {
+  try {
+    const userId = req.user.id; // Get user ID from authenticated user
+
+    // Find all bookings where the 'user' field matches the authenticated userId
+    const bookings = await Booking.find({ user: userId }).sort({ createdAt: -1 }); // Sort by creation date descending
+
+    res.status(200).json({ success: true, data: bookings });
+  } catch (error) {
+    console.error('Error fetching user bookings:', error);
+    res.status(500).json({ success: false, message: 'Server error while fetching bookings' });
   }
 };

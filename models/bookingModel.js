@@ -6,9 +6,12 @@ const bookingSchema = new mongoose.Schema({
   guests: { type: Number, required: true },
   arrival: { type: Date, required: true },
   leaving: { type: Date, required: true },
+  user: { // <--- ADD THIS FIELD
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Refers to the 'User' model
+    required: true,
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);
-// This code defines a Mongoose schema for a booking model in a travel application.
-// The schema includes fields for the destination, number of guests, arrival and leaving dates, and a timestamp for when the booking was created.
