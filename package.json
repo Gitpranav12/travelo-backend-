@@ -18,12 +18,14 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.0",
-    "nodemailer": "^7.0.3"
+    "nodemailer": "^7.0.3",
+    "pdfkit": "^0.17.1",
+    "stream-buffers": "^3.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
   },
-   "engines": {                   
-    "node": "20.x"                
+  "engines": {
+    "node": "20.x"
   }
 }
