@@ -5,7 +5,6 @@ const {
     login,
     forgotPassword,
     resetPassword,
-    googleLogin // Import the new function
 } = require('../controllers/authController');
 const router = express.Router();
 
@@ -14,8 +13,5 @@ router.post('/register', register);
 router.post('/login', login);
 router.post('/forgotpassword', forgotPassword);
 router.put('/resetpassword/:resettoken', resetPassword);
-
-// New Google Login Route
-router.post('/google-login', googleLogin); // <-- ADD THIS LINE
 
 module.exports = router;
