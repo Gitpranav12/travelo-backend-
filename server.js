@@ -1,4 +1,4 @@
-// server.js
+// server.js connection restrored
 require('dotenv').config(); // .env files se environment variables load karein
 const express = require('express');
 const cors = require('cors');
@@ -28,7 +28,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.send("API is running...");
 });
-app.use('/api/auth', authRoutes); // <--- Yahan badlav kiya gaya hai
+app.use('/api/auth', authRoutes); // <--- Yahan badlav kiya gaya hai count karte hain
 app.use('/api/users', userRoutes); // Yahan koi badlav nahi
 // Doosre routes
 app.use('/api/bookings', bookingRoutes);
