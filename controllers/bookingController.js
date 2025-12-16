@@ -101,17 +101,25 @@ exports.bookTicket = async (req, res) => {
     `;
 
     // ✅ Send email with PDF attachment
-    await sendEmail({
-      to: user.email,
-      subject: '🎉 Booking Confirmed! Ticket Attached 🎫',
-      html: htmlMessage,
-      attachments: [
-        {
-          filename: `ticket-${booking._id}.pdf`,
-          content: pdfBuffer,
-        },
-      ],
-    });
+try {
+  await sendEmail({
+    to: user.email,
+    subject: '🎉 Booking Confirmed! Ticket Attached 🎫',
+    html: htmlMessage,
+    attachments: [
+      {
+        filename: `ticket-${booking._id}.pdf`,
+        content: pdfBuffer,
+      },
+    ],
+  });
+} catch (emailError) {
+  console.error(
+    '⚠️ Email failed but booking SUCCESS:',
+    emailError.message
+  );
+}
+
 
     return res.status(201).json({
       message: 'Booking confirmed and ticket sent to your email!',
