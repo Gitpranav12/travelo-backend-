@@ -19,7 +19,8 @@ connectDB();
 app.use(cors({
     origin: [
         'http://localhost:3000', // Local development ke liye
-        process.env.CLIENT_URL // .env se client URL dynamically load karein
+        process.env.CLIENT_URL,
+        'https://travelobooking.netlify.app' // .env se client URL dynamically load karein
     ],
     credentials: true
 }));
