@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 app.use(cors({
     origin: [
-        'http://localhost:3000', // Local development ke liye
+        'https://travelobooking.netlify.app', // Local development ke liye
         process.env.CLIENT_URL // .env se client URL dynamically load karein
     ],
     credentials: true
